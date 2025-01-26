@@ -1,5 +1,4 @@
-// Home.jsx
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { db, storage } from "../../../firebase";
 import {
   collection,
@@ -44,11 +43,14 @@ const languages = [
   "Arabic",
   "Russian",
   "Japanese",
+  // Add more languages here as needed
 ];
 
 const Home = () => {
   const [series, setSeries] = useState([]);
   const [selectedSeries, setSelectedSeries] = useState(null);
+  const [selectedLanguage, setSelectedLanguage] = useState(""); // Language state
+  const [episodesBySeriesAndLanguage, setEpisodesBySeriesAndLanguage] = useState({});
 
   const [seriesTitle, setSeriesTitle] = useState("");
   const [seriesDescription, setSeriesDescription] = useState("");
@@ -59,7 +61,7 @@ const Home = () => {
   const [mediaFile, setMediaFile] = useState(null);
   const [duration, setDuration] = useState("");
   const [seriesMode, setSeriesMode] = useState("");
-  const [language, setLanguage] = useState("");
+  const [language, setLanguage] = useState(""); // Language for episodes
 
   const fetchSeries = async () => {
     const q = query(collection(db, "series"));
@@ -75,6 +77,23 @@ const Home = () => {
       })
     );
     setSeries(seriesData);
+    categorizeEpisodesBySeriesAndLanguage(seriesData);
+  };
+
+  const categorizeEpisodesBySeriesAndLanguage = (seriesData) => {
+    const categorized = {};
+    seriesData.forEach((seriesItem) => {
+      seriesItem.episodes.forEach((episode) => {
+        if (!categorized[seriesItem.id]) {
+          categorized[seriesItem.id] = {};
+        }
+        if (!categorized[seriesItem.id][episode.language]) {
+          categorized[seriesItem.id][episode.language] = [];
+        }
+        categorized[seriesItem.id][episode.language].push(episode);
+      });
+    });
+    setEpisodesBySeriesAndLanguage(categorized);
   };
 
   const handleCreateSeries = async (e) => {
@@ -112,7 +131,7 @@ const Home = () => {
 
   const handleCreateEpisode = async (e) => {
     e.preventDefault();
-    if (!selectedSeries || !episodeTitle || !mediaFile || !duration) {
+    if (!selectedSeries || !episodeTitle || !mediaFile || !duration || !language) {
       alert("All episode fields are required!");
       return;
     }
@@ -124,8 +143,8 @@ const Home = () => {
     await addDoc(episodesRef, {
       title: episodeTitle,
       duration,
-      language,
       mediaUrl,
+      language,
       createdAt: Timestamp.now(),
     });
 
@@ -169,8 +188,6 @@ const Home = () => {
               required
               className={styles.fileInput}
             />
-
-            {/* Category Dropdown for selecting type of series */}
             <select
               value={category}
               onChange={(e) => setCategory(e.target.value)}
@@ -180,12 +197,10 @@ const Home = () => {
               <option value="">Select Category</option>
               {categories.map((category) => (
                 <option key={category} value={category}>
-                  {category}{" "}
+                  {category}
                 </option>
               ))}
             </select>
-
-            {/* Series Mode Dropdown: Audio or Video */}
             <select
               value={seriesMode}
               onChange={(e) => setSeriesMode(e.target.value)}
@@ -196,7 +211,6 @@ const Home = () => {
               <option value="audio">Audio</option>
               <option value="video">Video</option>
             </select>
-
             <button type="submit" className={styles.button}>
               Create Series
             </button>
@@ -204,8 +218,6 @@ const Home = () => {
         </div>
 
         {/* Add Episodes Section */}
-        {/* Add Episodes Section */}
-
         <div className={styles.section}>
           <h2 className={styles.title}>Add Episodes</h2>
           <select
@@ -245,7 +257,6 @@ const Home = () => {
                   required
                   className={styles.fileInput}
                 />
-                {/* Language Dropdown */}
                 <select
                   value={language}
                   onChange={(e) => setLanguage(e.target.value)}
@@ -263,40 +274,44 @@ const Home = () => {
                   Add Episode
                 </button>
               </form>
-
-              {/* Display Total Episodes */}
-              <p className={styles.episodeCount}>
-                Total Episodes:{" "}
-                {series.find((s) => s.id === selectedSeries)?.episodes
-                  ?.length || 0}
-              </p>
             </>
           )}
         </div>
       </div>
-      {/* Display Episode List */}
+
+      {/* Episode List Section */}
       <div className={styles.episodeList}>
-        <h2 style={{ textAlign: "center" }}>
-          Episodes in{" "}
-          {series.find((s) => s.id === selectedSeries)?.title ||
-            "Select a series"}
-        </h2>
-        <div style={{ display: "flex", gap: "1rem" }}>
-          {series.find((s) => s.id === selectedSeries)?.episodes?.length > 0 ? (
-            series
-              .find((s) => s.id === selectedSeries)
-              ?.episodes.map((episode, index) => (
-                <div key={index} className={styles.episodeCard}>
-                  <h3 className={styles.episodeTitle}>{episode.title}</h3>
-                  <p className={styles.episodeDuration}>
-                    Duration: {episode.duration}
-                  </p>
-                  <p>Created At : {formatDate(episode.createdAt)}</p>
+        <div className={styles.languageSidebar}>
+          <h3>Select Language</h3>
+          <ul>
+            {Object.keys(episodesBySeriesAndLanguage[selectedSeries] || {}).map((lang) => (
+              <li
+                key={lang}
+                className={selectedLanguage === lang ? styles.activeLanguage : ""}
+                onClick={() => setSelectedLanguage(lang)}
+              >
+                {lang}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className={styles.episodeDisplay}>
+          <h2>Episodes in {selectedLanguage || "Select a language"}</h2>
+          <div className={styles.episodeContainer}>
+            {episodesBySeriesAndLanguage[selectedSeries]?.[selectedLanguage]?.length > 0 ? (
+              episodesBySeriesAndLanguage[selectedSeries][selectedLanguage].map((episode, index) => (
+                <div key={index}  className={styles.epCard}>
+                  <h3>{episode.title}</h3>
+                  <p>Duration: {episode.duration}</p>
+                  <p>Language: {episode.language}</p>
+                  <p>CreatedAt: {formatDate(episode.createdAt)}</p>
                 </div>
               ))
-          ) : (
-            <p>No episodes available for this series.</p>
-          )}
+            ) : (
+              <p>No episodes available for this language and series.</p>
+            )}
+          </div>
         </div>
       </div>
     </div>
