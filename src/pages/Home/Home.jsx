@@ -9,10 +9,12 @@ import {
   deleteDoc,
   doc,
   updateDoc,
+  getDoc,
 } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import styles from "./style.module.css";
 import { formatDate } from "../../functions/formatDate";
+import { deleteObject } from "firebase/storage"; // Import deleteObject
 
 const categories = [
   "Love",
@@ -151,8 +153,8 @@ const Home = () => {
     const mediaUrl = await getDownloadURL(mediaRef);
 
     const episodesRef = collection(db, "series", selectedSeries, "episodes");
-     // Add the episode and retrieve the document reference
-     const docRef = await addDoc(episodesRef, {
+    // Add the episode and retrieve the document reference
+    const docRef = await addDoc(episodesRef, {
       title: episodeTitle,
       duration,
       mediaUrl,
@@ -173,10 +175,27 @@ const Home = () => {
   const handleDeleteEpisode = async (seriesId, episodeId) => {
     if (window.confirm("Are you sure you want to delete this episode?")) {
       try {
+        // Get the episode document
         const episodeRef = doc(db, "series", seriesId, "episodes", episodeId);
-        await deleteDoc(episodeRef);
-        alert("Episode deleted successfully!");
-        fetchSeries(); // Refresh the series list to reflect the deletion
+        const episodeDoc = await getDoc(episodeRef);
+
+        if (episodeDoc.exists()) {
+          const episodeData = episodeDoc.data();
+
+          // Delete the media file from storage
+          if (episodeData.mediaUrl) {
+            const mediaRef = ref(storage, episodeData.mediaUrl);
+            await deleteObject(mediaRef);
+          }
+
+          // Delete the episode document
+          await deleteDoc(episodeRef);
+
+          alert("Episode deleted successfully!");
+          fetchSeries(); // Refresh the series list
+        } else {
+          alert("Episode does not exist.");
+        }
       } catch (error) {
         console.error("Error deleting episode:", error);
         alert("Failed to delete episode.");
@@ -196,8 +215,6 @@ const Home = () => {
       return;
     }
 
-    console.log("episode:", editEpisode);
-
     try {
       const episodeRef = doc(
         db,
@@ -212,19 +229,21 @@ const Home = () => {
         language: editEpisode.language,
       };
 
-      console.log("Selected Series ID:", selectedSeries);
-      console.log("Episode ID:", editEpisode.id);
-
-      // If a new media file is uploaded
+      // Check if a new media file is uploaded
       if (editEpisode.mediaFile && editEpisode.mediaFile.name) {
+        const oldMediaUrl = editEpisode.mediaUrl;
+
+        // Upload the new file
         const mediaRef = ref(storage, `media/${editEpisode.mediaFile.name}`);
         await uploadBytes(mediaRef, editEpisode.mediaFile);
         const mediaUrl = await getDownloadURL(mediaRef);
         updatedData.mediaUrl = mediaUrl;
-      } else if (editEpisode.mediaFile) {
-        console.error("Media file provided is invalid:", editEpisode.mediaFile);
-        alert("Invalid media file.");
-        return;
+
+        // Delete the old media file
+        if (oldMediaUrl) {
+          const oldMediaRef = ref(storage, oldMediaUrl);
+          await deleteObject(oldMediaRef);
+        }
       }
 
       await updateDoc(episodeRef, updatedData);
