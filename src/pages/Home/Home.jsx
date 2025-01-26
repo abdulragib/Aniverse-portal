@@ -33,6 +33,19 @@ const categories = [
   "Bytes",
 ];
 
+const languages = [
+  "English",
+  "Spanish",
+  "French",
+  "German",
+  "Hindi",
+  "Mandarin",
+  "Portuguese",
+  "Arabic",
+  "Russian",
+  "Japanese",
+];
+
 const Home = () => {
   const [series, setSeries] = useState([]);
   const [selectedSeries, setSelectedSeries] = useState(null);
@@ -45,7 +58,8 @@ const Home = () => {
   const [episodeTitle, setEpisodeTitle] = useState("");
   const [mediaFile, setMediaFile] = useState(null);
   const [duration, setDuration] = useState("");
-  const [seriesMode,setSeriesMode]=useState("");
+  const [seriesMode, setSeriesMode] = useState("");
+  const [language, setLanguage] = useState("");
 
   const fetchSeries = async () => {
     const q = query(collection(db, "series"));
@@ -110,6 +124,7 @@ const Home = () => {
     await addDoc(episodesRef, {
       title: episodeTitle,
       duration,
+      language,
       mediaUrl,
       createdAt: Timestamp.now(),
     });
@@ -118,6 +133,7 @@ const Home = () => {
     setEpisodeTitle("");
     setMediaFile(null);
     setDuration("");
+    setLanguage("");
   };
 
   useEffect(() => {
@@ -163,7 +179,9 @@ const Home = () => {
             >
               <option value="">Select Category</option>
               {categories.map((category) => (
-                <option key={category} value={category}>{category}  </option>
+                <option key={category} value={category}>
+                  {category}{" "}
+                </option>
               ))}
             </select>
 
@@ -227,6 +245,20 @@ const Home = () => {
                   required
                   className={styles.fileInput}
                 />
+                {/* Language Dropdown */}
+                <select
+                  value={language}
+                  onChange={(e) => setLanguage(e.target.value)}
+                  className={styles.select}
+                  required
+                >
+                  <option value="">Select Language</option>
+                  {languages.map((lang) => (
+                    <option key={lang} value={lang}>
+                      {lang}
+                    </option>
+                  ))}
+                </select>
                 <button type="submit" className={styles.button}>
                   Add Episode
                 </button>
