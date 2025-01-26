@@ -175,6 +175,35 @@
   gap: 20px;
 }
 
+
+.deleteButton {
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.editButton {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.cancelButton {
+  background-color: #95a5a6;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  margin-left: 10px;
+}
+
+
 @media (max-width: 768px) {
   .horizontalLayout {
     flex-direction: column; /* Stack sections vertically on smaller screens */
