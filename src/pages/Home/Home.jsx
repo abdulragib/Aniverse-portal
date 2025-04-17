@@ -148,17 +148,24 @@ const Home = () => {
       alert("All episode fields are required!");
       return;
     }
+
+    const episodesRef = collection(db, "series", selectedSeries, "episodes");
+
+    // Fetch existing episodes to determine the next episode number
+    const episodesSnapshot = await getDocs(episodesRef);
+    const nextEpisodeNumber = episodesSnapshot.size + 1;
+
     const mediaRef = ref(storage, `media/${mediaFile.name}`);
     await uploadBytes(mediaRef, mediaFile);
     const mediaUrl = await getDownloadURL(mediaRef);
 
-    const episodesRef = collection(db, "series", selectedSeries, "episodes");
     // Add the episode and retrieve the document reference
     const docRef = await addDoc(episodesRef, {
       title: episodeTitle,
       duration,
       mediaUrl,
       language,
+      episodeNumber: nextEpisodeNumber, // Automatically assign episode number
       createdAt: Timestamp.now(),
     });
 
@@ -170,6 +177,7 @@ const Home = () => {
     setMediaFile(null);
     setDuration("");
     setLanguage("");
+    fetchSeries(); // Refresh the series list
   };
 
   const handleDeleteEpisode = async (seriesId, episodeId) => {
