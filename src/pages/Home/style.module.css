@@ -1,81 +1,140 @@
 .container {
-  padding: 1.5rem;
-  background-color: #f7fafc;
+  padding: 2rem;
+  background: linear-gradient(to bottom right, #0f0f0f, #1a3d2f); /* Dark black and green gradient */
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
+  font-family: 'Arial', sans-serif;
+  color: #e0e0e0; /* Light text color for contrast */
 }
 
 .mainTitle {
-  font-size: 2.5rem;
+  font-size: 3rem;
   font-weight: bold;
-  color: #2d3748;
-  margin-bottom: 2rem;
+  color: #a8d5ba; /* Soft green for contrast */
+  margin-bottom: 2.5rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  animation: fadeIn 1s ease-in-out;
 }
 
 .horizontalLayout {
   display: flex;
-  flex-direction: row; /* Align children horizontally */
+  flex-direction: row;
   justify-content: space-between;
-  gap: 2rem; /* Space between sections */
+  gap: 2rem;
   width: 100%;
-  max-width: 1200px; /* Limit total width */
+  max-width: 1200px;
 }
 
 .section {
-  flex: 1; /* Make sections take equal space */
-  background-color: #ffffff;
-  padding: 1.5rem;
-  border-radius: 0.5rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  flex: 1;
+  background-color: #1e2d24; /* Dark greenish background for sections */
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
   display: flex;
   flex-direction: column;
+  gap: 1.5rem; /* Added spacing between elements */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.section:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
 }
 
 .title {
-  font-size: 1.5rem;
+  font-size: 1.75rem;
   font-weight: bold;
-  color: #2d3748;
-  margin-bottom: 1.5rem;
+  color: #c1ccdf;
+  margin-bottom: 1rem;
+  border-bottom: 2px solid #e2e8f0;
+  padding-bottom: 0.5rem;
+  text-align: center; /* Center-align section titles */
 }
 
 .form {
   display: flex;
   flex-direction: column;
+  gap: 1.25rem; /* Increased spacing between form fields */
+  background-color: #3e5c4a; /* Lightened green for forms */
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  align-items: center; /* Center-align form elements */
 }
 
 .input,
 .textarea,
 .fileInput,
 .select {
-  width: 100%;
-  margin-bottom: 1rem;
-  padding: 0.5rem;
-  border: 1px solid #d2d6dc;
-  border-radius: 0.25rem;
+  width: 100%; /* Ensure full width for responsiveness */
+  max-width: 400px; /* Limit the maximum width */
+  padding: 0.75rem; /* Increased padding for better usability */
+  border: 1px solid #3e5c4a; /* Dark green border */
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  background-color: #4a6b5a; /* Slightly lighter background for inputs */
+  color: #e0e0e0; /* Light text color */
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.input:focus,
+.textarea:focus,
+.fileInput:focus,
+.select:focus {
+  border-color: #4caf50; /* Bright green highlight */
+  outline: none;
+  box-shadow: 0 0 6px rgba(76, 175, 80, 0.5);
+}
+
+.textarea {
+  resize: vertical; /* Allow vertical resizing for better usability */
+  min-height: 100px; /* Set a minimum height for textareas */
 }
 
 .button {
-  background-color: #4299e1;
+  background-color: #4caf50; /* Bright green button */
   color: white;
-  padding: 0.5rem 1rem;
-  border-radius: 0.25rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
   border: none;
   cursor: pointer;
+  font-size: 1rem;
+  font-weight: bold;
+  transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .button:hover {
-  background-color: #3182ce;
+  background-color: #388e3c; /* Darker green on hover */
+  transform: scale(1.05);
+}
+
+.select {
+  appearance: none; /* Remove default browser styles for select */
+  background: url("data:image/svg+xml;charset=US-ASCII,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'%3E%3Cpath fill='%234299e1' d='M2 0L0 2h4z'/%3E%3C/svg%3E") no-repeat right 0.75rem center;
+  background-size: 0.65rem;
+  background-color: #4a6b5a; /* Light green background for dropdown */
+  color: #e0e0e0; /* Light text color for contrast */
+}
+
+.fileInput {
+  padding: 0.5rem; /* Adjust padding for file input */
+  font-size: 0.95rem;
+  border: 1px dashed #cbd5e0; /* Dashed border for better visual distinction */
+}
+
+.fileInput:hover {
+  border-color: #4299e1;
 }
 
 .episodeList {
-  margin-top: 5rem;
+  margin-top: 3rem;
   display: flex;
   flex-direction: row;
-  align-self: flex-start !important;
-  gap: 1rem;
-  padding: 2.5rem;
+  gap: 2rem;
+  width: 100%;
 }
 
 .episodeCard {
@@ -92,11 +151,50 @@
 }
 
 .epCard {
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  padding: 12px; /* Reduced padding */
+  background-color: #53c17f; /* Match section background */
+  color: #e0e0e0;
+  border-radius: 1rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  padding: 1.5rem; /* Increased padding for better spacing */
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  width: 100%;
+  max-width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem; /* Add spacing between elements inside the card */
+}
+
+.epCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+  background-color: #75dfa5; /* Slightly lighter on hover */
+}
+
+.epCard h3 {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #2d3748;
+  margin-bottom: 0.5rem;
+}
+
+.epCard p {
+  font-size: 0.95rem;
+  color: #4a5568;
+  margin-bottom: 0.5rem;
+}
+
+.epCard .button {
+  background-color: #4299e1;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.epCard .button:hover {
+  background-color: #3182ce;
 }
 
 .episodeTitle {
@@ -122,7 +220,7 @@
 .episodeDescription {
   font-size: 0.9rem;
   color: #777;
-  margin-top: 8px;
+  margin-top: 8px; /* Added top margin for spacing */
 }
 
 .episodeCard .button {
@@ -134,7 +232,6 @@
   border: none;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  margin-top: 8px; /* Added top margin for spacing */
 }
 
 .episodeCard .button:hover {
@@ -143,10 +240,18 @@
 
 .languageSidebar {
   width: 250px;
-  border-right: 1px solid #ccc;
-  padding: 10px;
-  display: flex;
-  flex-direction: column;
+  background-color: #2a3f34; /* Match form background */
+  color: #e0e0e0;
+  border-radius: 1rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  padding: 1rem;
+}
+
+.languageSidebar h3 {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #c0cadc;
+  margin-bottom: 1rem;
 }
 
 .languageSidebar ul {
@@ -155,26 +260,32 @@
 }
 
 .languageSidebar li {
-  padding: 8px;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
   cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .languageSidebar li:hover,
 .languageSidebar li.activeLanguage {
-  background-color: #f0f0f0;
+  background-color: #4299e1;
+  color: white;
 }
 
 .episodeDisplay {
   flex-grow: 1;
-  padding: 20px;
+  background-color: #2a3f34; /* Match form background */
+  color: #e0e0e0;
+  border-radius: 1rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  padding: 2rem;
 }
 
 .episodeContainer {
   display: flex;
   flex-wrap: wrap;
-  gap: 20px;
+  gap: 1.5rem;
 }
-
 
 .deleteButton {
   background-color: #e74c3c;
@@ -183,6 +294,7 @@
   padding: 5px 10px;
   cursor: pointer;
   margin-top: 10px;
+  border-radius: 5px;
 }
 
 .editButton {
@@ -192,6 +304,7 @@
   padding: 5px 10px;
   cursor: pointer;
   margin-top: 10px;
+  border-radius: 5px;
 }
 
 .cancelButton {
@@ -200,12 +313,142 @@
   border: none;
   padding: 5px 10px;
   cursor: pointer;
-  margin-left: 10px;
+  margin-top: 10px;
+  border-radius: 5px;
 }
 
+.editFormWrapper {
+  margin-top: 1rem;
+  padding: 1.5rem;
+  background-color: #f9f9f9;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.editFormWrapper .form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.editFormWrapper .input,
+.editFormWrapper .fileInput,
+.editFormWrapper .select {
+  width: 100%;
+  padding: 0.4rem; /* Reduced padding to decrease height */
+  border: 1px solid #d2d6dc;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+}
+
+.editFormWrapper .button {
+  background-color: #4caf50;
+  color: white;
+  padding: 0.4rem 1rem; /* Reduced padding to decrease height */
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.editFormWrapper .button:hover {
+  background-color: #45a049;
+}
+
+.editFormWrapper .cancelButton {
+  background-color: #e74c3c;
+  color: white;
+  padding: 0.4rem 1rem; /* Reduced padding to decrease height */
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.editFormWrapper .cancelButton:hover {
+  background-color: #c0392b;
+}
+
+.episodeSearchInput{
+  width: 95%; /* Ensure full width for responsiveness */
+  padding: 0.75rem; /* Increased padding for better usability */
+  border: 1px solid #3e5c4a; /* Dark green border */
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  background-color: #4a6b5a; /* Slightly lighter background for inputs */
+  color: #e0e0e0; /* Light text color */
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.episodeSearchInput:focus{
+  border-color: #4caf50; /* Bright green highlight */
+  outline: none;
+  box-shadow: 0 0 6px rgba(76, 175, 80, 0.5);
+}
+
+.dropdown {
+  position: absolute;
+  top: calc(100% + 0.5rem); /* Position the dropdown directly below the input field */
+  left: 0;
+  background-color: rgb(46, 95, 62);
+  border: 1px solid #ccc;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 1000;
+  width: 85%;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add shadow for better visibility */
+}
+
+
+
+.dropdown:hover{
+  background-color: #4caf50 !important; /* Change background color on hover */
+}
+
+.dropdownItem {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.dropdownItem:hover,
+.activeDropdownItem {
+  background-color: #405e4b;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
+  z-index: 999; /* Ensure it appears above other elements */
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
 @media (max-width: 768px) {
   .horizontalLayout {
     flex-direction: column; /* Stack sections vertically on smaller screens */
+  }
+  .episodeList {
+    flex-direction: column;
+    width: 100%;
+  }
+  .languageSidebar {
+    width: 100%;
   }
 }

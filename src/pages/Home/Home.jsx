@@ -57,6 +57,8 @@ const Home = () => {
   const [selectedLanguage, setSelectedLanguage] = useState(""); // Language state
   const [episodesBySeriesAndLanguage, setEpisodesBySeriesAndLanguage] =
     useState({});
+  const [searchQuery, setSearchQuery] = useState(""); // State for search query
+  const [isDropdownVisible, setIsDropdownVisible] = useState(false); // State to control overlay visibility
 
   const [seriesTitle, setSeriesTitle] = useState("");
   const [seriesDescription, setSeriesDescription] = useState("");
@@ -329,17 +331,52 @@ const Home = () => {
         {/* Add Episodes Section */}
         <div className={styles.section}>
           <h2 className={styles.title}>Add Episodes</h2>
-          <select
-            onChange={(e) => setSelectedSeries(e.target.value)}
-            className={styles.select}
-          >
-            <option value="">Select a Series</option>
-            {series.map((s) => (
-              <option key={s.id} value={s.id}>
-                {s.title}
-              </option>
-            ))}
-          </select>
+          <div style={{ position: "relative", width: "100%" }}>
+            <input
+              type="text"
+              placeholder="Search Series"
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setIsDropdownVisible(true); // Show overlay when typing
+              }}
+              className={styles.episodeSearchInput}
+            />
+            {isDropdownVisible && (
+              <>
+                <div
+                  className={styles.overlay}
+                  onClick={() => {
+                    setIsDropdownVisible(false); // Hide overlay and dropdown on click
+                    setSearchQuery(""); // Optionally clear the search query
+                  }}
+                ></div>
+                <div className={styles.dropdown}>
+                  {series
+                    .filter((s) =>
+                      s.title.toLowerCase().includes(searchQuery.toLowerCase())
+                    )
+                    .map((s) => (
+                      <div
+                        key={s.id}
+                        className={`${styles.dropdownItem} ${
+                          selectedSeries === s.id
+                            ? styles.activeDropdownItem
+                            : ""
+                        }`}
+                        onClick={() => {
+                          setSelectedSeries(s.id);
+                          setSearchQuery(""); // Clear search query after selection
+                          setIsDropdownVisible(false); // Hide overlay
+                        }}
+                      >
+                        {s.title}
+                      </div>
+                    ))}
+                </div>
+              </>
+            )}
+          </div>
           {selectedSeries && (
             <>
               <form onSubmit={handleCreateEpisode} className={styles.form}>
@@ -439,78 +476,80 @@ const Home = () => {
                     </button>
 
                     {editEpisode && editEpisode.id === episode.id && (
-                      <form
-                        onSubmit={handleUpdateEpisode}
-                        className={styles.form}
-                      >
-                        <input
-                          type="text"
-                          placeholder="Episode Title"
-                          value={editEpisode.title}
-                          onChange={(e) =>
-                            setEditEpisode({
-                              ...editEpisode,
-                              title: e.target.value,
-                            })
-                          }
-                          required
-                          className={styles.input}
-                        />
-                        <input
-                          type="text"
-                          placeholder="Duration (HH:MM:SS)"
-                          value={editEpisode.duration}
-                          onChange={(e) =>
-                            setEditEpisode({
-                              ...editEpisode,
-                              duration: e.target.value,
-                            })
-                          }
-                          required
-                          className={styles.input}
-                        />
-                        <input
-                          type="file"
-                          accept="audio/*,video/*"
-                          onChange={(e) => {
-                            if (e.target.files.length > 0) {
+                      <div className={styles.editFormWrapper}>
+                        <form
+                          onSubmit={handleUpdateEpisode}
+                          className={styles.form}
+                        >
+                          <input
+                            type="text"
+                            placeholder="Episode Title"
+                            value={editEpisode.title}
+                            onChange={(e) =>
                               setEditEpisode({
                                 ...editEpisode,
-                                mediaFile: e.target.files[0],
-                              });
+                                title: e.target.value,
+                              })
                             }
-                          }}
-                          className={styles.fileInput}
-                        />
-                        <select
-                          value={editEpisode.language}
-                          onChange={(e) =>
-                            setEditEpisode({
-                              ...editEpisode,
-                              language: e.target.value,
-                            })
-                          }
-                          className={styles.select}
-                          required
-                        >
-                          <option value="">Select Language</option>
-                          {languages.map((lang) => (
-                            <option key={lang} value={lang}>
-                              {lang}
-                            </option>
-                          ))}
-                        </select>
-                        <button type="submit" className={styles.button}>
-                          Update Episode
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setEditEpisode(null)}
-                          className={styles.cancelButton}
-                        >
-                          Cancel
-                        </button>
-                      </form>
+                            required
+                            className={styles.input}
+                          />
+                          <input
+                            type="text"
+                            placeholder="Duration (HH:MM:SS)"
+                            value={editEpisode.duration}
+                            onChange={(e) =>
+                              setEditEpisode({
+                                ...editEpisode,
+                                duration: e.target.value,
+                              })
+                            }
+                            required
+                            className={styles.input}
+                          />
+                          <input
+                            type="file"
+                            accept="audio/*,video/*"
+                            onChange={(e) => {
+                              if (e.target.files.length > 0) {
+                                setEditEpisode({
+                                  ...editEpisode,
+                                  mediaFile: e.target.files[0],
+                                });
+                              }
+                            }}
+                            className={styles.fileInput}
+                          />
+                          <select
+                            value={editEpisode.language}
+                            onChange={(e) =>
+                              setEditEpisode({
+                                ...editEpisode,
+                                language: e.target.value,
+                              })
+                            }
+                            className={styles.select}
+                            required
+                          >
+                            <option value="">Select Language</option>
+                            {languages.map((lang) => (
+                              <option key={lang} value={lang}>
+                                {lang}
+                              </option>
+                            ))}
+                          </select>
+                          <button type="submit" className={styles.button}>
+                            Update Episode
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setEditEpisode(null)}
+                            className={styles.cancelButton}
+                          >
+                            Cancel
+                          </button>
+                        </form>
+                      </div>
                     )}
                   </div>
                 )
